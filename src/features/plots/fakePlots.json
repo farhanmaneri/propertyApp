@@ -1,0 +1,5 @@
+[
+  { "id": 1, "code": "A-101", "block": "A", "size": "5 Marla", "price": 1500000, "status": "available" },
+  { "id": 2, "code": "A-102", "block": "A", "size": "10 Marla", "price": 2500000, "status": "sold" },
+  { "id": 3, "code": "B-201", "block": "B", "size": "1 Kanal", "price": 4500000, "status": "available" }
+]
