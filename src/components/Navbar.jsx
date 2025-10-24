@@ -1,12 +1,28 @@
-import React from "react";
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import { FiMenu, FiX } from "react-icons/fi";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { FiMenu, FiX, FiUser, FiLogOut } from "react-icons/fi";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
+
+  // Load user from localStorage on mount
+  useEffect(() => {
+    const userInfo = localStorage.getItem("userInfo");
+    if (userInfo) {
+      setUser(JSON.parse(userInfo));
+    }
+  }, []);
 
   const toggleMenu = () => setOpen(!open);
+
+  // Logout user
+  const handleLogout = () => {
+    localStorage.removeItem("userInfo");
+    setUser(null);
+    navigate("/login");
+  };
 
   const navLinks = [
     { path: "/", label: "Dashboard" },
@@ -23,11 +39,11 @@ export default function Navbar() {
         <div className="flex justify-between h-16 items-center">
           {/* Logo */}
           <Link to="/" className="text-xl font-bold text-blue-600">
-            BizManager
+            Property App
           </Link>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex space-x-6">
+          <div className="hidden md:flex space-x-6 items-center">
             {navLinks.map((link) => (
               <Link
                 key={link.path}
@@ -37,6 +53,30 @@ export default function Navbar() {
                 {link.label}
               </Link>
             ))}
+
+            {/* User Info / Login */}
+            {user ? (
+              <div className="flex items-center gap-3">
+                <span className="text-gray-700 font-medium">
+                  👋 Hi, {user.name?.split(" ")[0] || "User"}
+                </span>
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center gap-1 text-red-600 hover:text-red-800"
+                >
+                  <FiLogOut size={18} />
+                  Logout
+                </button>
+              </div>
+            ) : (
+              <Link
+                to="/login"
+                className="flex items-center gap-2 text-gray-700 hover:text-blue-600 font-medium"
+              >
+                <FiUser size={20} />
+                <span>Login</span>
+              </Link>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -61,6 +101,32 @@ export default function Navbar() {
               {link.label}
             </Link>
           ))}
+
+          {user ? (
+            <div className="flex items-center justify-between px-4 py-3 border-t">
+              <span className="text-gray-700">
+                👋 {user.name?.split(" ")[0]}
+              </span>
+              <button
+                onClick={() => {
+                  handleLogout();
+                  setOpen(false);
+                }}
+                className="flex items-center gap-1 text-red-600 hover:text-red-800"
+              >
+                <FiLogOut size={18} /> Logout
+              </button>
+            </div>
+          ) : (
+            <Link
+              to="/login"
+              onClick={() => setOpen(false)}
+              className="flex items-center gap-2 px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600"
+            >
+              <FiUser size={20} />
+              <span>Login</span>
+            </Link>
+          )}
         </div>
       )}
     </nav>

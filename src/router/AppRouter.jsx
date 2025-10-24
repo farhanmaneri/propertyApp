@@ -7,6 +7,8 @@ import Ledger from "../pages/Ledger";
 import HR from "../pages/HR";
 import Reports from "../pages/Reports";
 import Navbar from "../components/Navbar";
+import Login from "../pages/Login";
+import Signup from "../pages/Signup";
 
 export default function AppRouter() {
   return (
@@ -19,6 +21,8 @@ export default function AppRouter() {
         <Route path="/ledger" element={<Ledger />} />
         <Route path="/hr" element={<HR />} />
         <Route path="/reports" element={<Reports />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
       </Routes>
     </BrowserRouter>
   );
