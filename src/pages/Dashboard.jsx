@@ -1,47 +1,58 @@
+// src/pages/Dashboard.jsx
 import React from "react";
-import DashboardCards from "../components/DashboardCards";
-import {
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  CartesianGrid,
-  XAxis,
-  YAxis,
-  Tooltip,
-} from "recharts";
+import { useGetPlotsQuery } from "../features/plots/plotsApiSlice";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 export default function Dashboard() {
-  const data = [
-    { name: "Jan", sales: 4000 },
-    { name: "Feb", sales: 3000 },
-    { name: "Mar", sales: 5000 },
-    { name: "Apr", sales: 4500 },
-  ];
+  const { data: plots, isLoading } = useGetPlotsQuery();
+  const { user } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
+
+  if (isLoading) return <p>Loading...</p>;
+
+  const handleBuy = (plotId) => {
+    if (!user) {
+      alert("Please login to buy a plot.");
+      navigate("/login");
+      return;
+    }
+    // You can navigate to booking page or trigger mutation to buy plot
+    navigate(`/bookings?plotId=${plotId}`);
+  };
 
   return (
-    <div className="p-6 md:ml-64">
-      <h1 className="text-2xl font-bold mb-6">Dashboard Overview</h1>
+    <div className="p-4">
+      <h1 className="text-xl font-bold mb-4">All Plots</h1>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        {plots?.map((plot) => (
+          <div
+            key={plot._id}
+            className="border rounded-xl p-4 shadow-md flex flex-col justify-between"
+          >
+            <h2 className="font-semibold">{plot.title}</h2>
+            <p>Status: {plot.status}</p>
+            <p>Price: Rs {plot.price}</p>
+            <p>Location: Rs {plot.location}</p>
+            <p>Size: Rs {plot.size}</p>
 
-      {/* Cards */}
-      <DashboardCards />
-
-      {/* Chart */}
-      <div className="mt-8 bg-white p-6 rounded-lg shadow">
-        <h2 className="text-lg font-semibold mb-4">Monthly Sales</h2>
-        <ResponsiveContainer width="100%" height={300}>
-          <LineChart data={data}>
-            <Line
-              type="monotone"
-              dataKey="sales"
-              stroke="#3B82F6"
-              strokeWidth={2}
-            />
-            <CartesianGrid stroke="#ccc" />
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Tooltip />
-          </LineChart>
-        </ResponsiveContainer>
+            {plot.status === "Available" ? (
+              <button
+                onClick={() => handleBuy(plot._id)}
+                className="bg-blue-500 text-white px-3 py-1 rounded mt-2 hover:bg-blue-600"
+              >
+                Buy Now
+              </button>
+            ) : (
+              <button
+                disabled
+                className="bg-gray-400 text-white px-3 py-1 rounded mt-2 cursor-not-allowed"
+              >
+                {plot.status}
+              </button>
+            )}
+          </div>
+        ))}
       </div>
     </div>
   );

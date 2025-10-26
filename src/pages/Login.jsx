@@ -1,35 +1,32 @@
 // src/pages/Login.jsx
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-
 import { useLoginMutation } from "../features/auth/authApiSlice";
 import { useDispatch } from "react-redux";
 import { setCredentials } from "../features/auth/authSlice";
 
-const dispatch = useDispatch();
-const [login, { isLoading }] = useLoginMutation();
-
-const navigate = useNavigate();
-
-
 const Login = () => {
+  const dispatch = useDispatch(); // ✅ inside component
+  const [login, { isLoading }] = useLoginMutation(); // ✅ inside component
+
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  try {
-    const res = await login(formData).unwrap();
-    dispatch(setCredentials(res)); // ✅ saves to Redux + localStorage
-    alert("Login successful!");
-  } catch (err) {
-    alert(err?.data?.message || "Login failed");
-  }
-};
-
+    e.preventDefault();
+    try {
+      const res = await login(formData).unwrap();
+      dispatch(setCredentials(res)); // ✅ saves to Redux
+      alert("Login successful!");
+      navigate("/"); // optional redirect
+    } catch (err) {
+      alert(err?.data?.message || "Login failed");
+    }
+  };
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100 pt-20">
@@ -57,9 +54,10 @@ const Login = () => {
           />
           <button
             type="submit"
+            disabled={isLoading}
             className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition"
           >
-            Login
+            {isLoading ? "Logging in..." : "Login"}
           </button>
         </form>
         <p className="text-center text-sm mt-4">
