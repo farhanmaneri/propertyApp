@@ -1,12 +1,12 @@
-// src/pages/Dashboard.jsx
+// src/pages/Home.jsx
 import React from "react";
 import { useGetPlotsQuery } from "../features/plots/plotsApiSlice";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-export default function Dashboard() {
+export default function Home() {
   const { data: plots, isLoading } = useGetPlotsQuery();
-  const { user } = useSelector((state) => state.auth);
+  const { userinfo:user } = useSelector((state) => state.auth);
   const navigate = useNavigate();
 
   if (isLoading) return <p>Loading...</p>;
@@ -36,7 +36,7 @@ export default function Dashboard() {
             <p>Location: Rs {plot.location}</p>
             <p>Size: Rs {plot.size}</p>
 
-            {plot.status === "Available" ? (
+            {plot.status.trim().toLowerCase() === "available" ? (
               <button
                 onClick={() => handleBuy(plot._id)}
                 className="bg-blue-500 text-white px-3 py-1 rounded mt-2 hover:bg-blue-600"

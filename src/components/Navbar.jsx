@@ -1,37 +1,46 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FiMenu, FiX, FiUser, FiLogOut } from "react-icons/fi";
+import { useSelector, useDispatch } from "react-redux";
+import { logout } from "../features/auth/authSlice";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
-  const [user, setUser] = useState(null);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  // Load user from localStorage on mount
-  useEffect(() => {
-    const userInfo = localStorage.getItem("userInfo");
-    if (userInfo) {
-      setUser(JSON.parse(userInfo));
-    }
-  }, []);
+  // ✅ Get user info from Redux (auto updates after login/logout)
+  const { userInfo: user } = useSelector((state) => state.auth);
 
-  const toggleMenu = () => setOpen(!open);
-
-  // Logout user
+  // ✅ Logout function
   const handleLogout = () => {
-    localStorage.removeItem("userInfo");
-    setUser(null);
+    dispatch(logout());
     navigate("/login");
   };
 
-  const navLinks = [
-    { path: "/", label: "Dashboard" },
-    { path: "/plots", label: "Plots" },
-    { path: "/bookings", label: "Bookings" },
-    { path: "/ledger", label: "Ledger" },
-    { path: "/hr", label: "HR" },
-    { path: "/reports", label: "Reports" },
-  ];
+  // ✅ Control mobile menu
+  const toggleMenu = () => setOpen(!open);
+
+  // ✅ Conditional links based on user role
+  let navLinks = [{ path: "/", label: "Home" }];
+
+  if (user) {
+    if (user.role === "admin") {
+      navLinks = [
+        { path: "/", label: "Home" },
+        { path: "/plots", label: "Plots" },
+        { path: "/bookings", label: "Bookings" },
+        { path: "/ledger", label: "Ledger" },
+        { path: "/hr", label: "HR" },
+        { path: "/reports", label: "Reports" },
+      ];
+    } else {
+      navLinks = [
+        { path: "/", label: "Home" },
+        { path: "/plots", label: "Plots" },
+      ];
+    }
+  }
 
   return (
     <nav className="bg-white shadow-md sticky top-0 z-50">
@@ -54,7 +63,7 @@ export default function Navbar() {
               </Link>
             ))}
 
-            {/* User Info / Login */}
+            {/* User Section */}
             {user ? (
               <div className="flex items-center gap-3">
                 <span className="text-gray-700 font-medium">

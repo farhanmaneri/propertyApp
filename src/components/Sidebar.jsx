@@ -11,7 +11,7 @@ import {
 export default function Sidebar() {
   const location = useLocation();
   const menu = [
-    { path: "/", icon: <FiHome />, label: "Dashboard" },
+    { path: "/", icon: <FiHome />, label: "Home" },
     { path: "/plots", icon: <FiGrid />, label: "Plots" },
     { path: "/bookings", icon: <FiBook />, label: "Bookings" },
     { path: "/ledger", icon: <FiDollarSign />, label: "Ledger" },

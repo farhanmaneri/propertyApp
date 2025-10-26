@@ -1,7 +1,7 @@
 // src/router/AppRouter.jsx
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Dashboard from "../pages/Dashboard"; // this will be public homepage
+import Home from "../pages/Home"; // this will be public homepage
 import Plots from "../pages/Plots"; // user's own plots
 import Booking from "../pages/Booking";
 import Ledger from "../pages/Ledger";
@@ -18,7 +18,7 @@ export default function AppRouter() {
       <Navbar />
       <Routes>
         {/* Public Routes */}
-        <Route path="/" element={<Dashboard />} /> {/* Home: All plots */}
+        <Route path="/" element={<Home />} /> {/* Home: All plots */}
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         {/* Protected User Routes */}
