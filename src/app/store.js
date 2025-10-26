@@ -1,12 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
-import plotsReducer from "../features/plots/plotsSlice";
-// import bookingsReducer from "../features/bookings/bookingsSlice";
-// import usersReducer from "../features/users/usersSlice";
+import { apiSlice } from "../features/api/apiSlice";
+import authReducer from "../features/auth/authSlice";
 
 export const store = configureStore({
   reducer: {
-    plots: plotsReducer,
-    // bookings: bookingsReducer,
-    // users: usersReducer,
+    [apiSlice.reducerPath]: apiSlice.reducer,
+    auth: authReducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(apiSlice.middleware),
 });
