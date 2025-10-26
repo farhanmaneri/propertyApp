@@ -1,36 +1,35 @@
 // src/pages/Login.jsx
 import React, { useState } from "react";
-import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 
+import { useLoginMutation } from "../features/auth/authApiSlice";
+import { useDispatch } from "react-redux";
+import { setCredentials } from "../features/auth/authSlice";
 
-const isDev = import.meta.env.MODE === "development";
+const dispatch = useDispatch();
+const [login, { isLoading }] = useLoginMutation();
 
-const API_URL = isDev
-  ? `${import.meta.env.VITE_API_URL_DEV}`
-  : `${import.meta.env.VITE_API_URL_PROD}`;
-  
+const navigate = useNavigate();
+
+
 const Login = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
-  const navigate = useNavigate();
 
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const res = await axios.post(
-        `${API_URL}/api/users/login`,
-        formData
-      );
-      localStorage.setItem("userInfo", JSON.stringify(res.data));
-      navigate("/");
-    } catch (err) {
-      setError(err.response?.data?.message || "Login failed");
-    }
-  };
+  e.preventDefault();
+  try {
+    const res = await login(formData).unwrap();
+    dispatch(setCredentials(res)); // ✅ saves to Redux + localStorage
+    alert("Login successful!");
+  } catch (err) {
+    alert(err?.data?.message || "Login failed");
+  }
+};
+
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100 pt-20">
